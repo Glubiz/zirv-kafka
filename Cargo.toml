@@ -2,6 +2,13 @@
 name = "zirv-kafka"
 version = "0.1.0"
 edition = "2024"
+description = "A convinient wrapper for rdkafka."
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/Glubiz/zirv-kafka"
+documentation = "https://docs.rs/zirv-kafka"
+keywords = ["rust", "programming"]
+categories = ["development-tools"]
 
 [dependencies]
 rdkafka = { version = "0.37.0", features = ["dynamic-linking"] }
