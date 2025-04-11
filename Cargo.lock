@@ -461,5 +461,6 @@ name = "zirv-kafka"
 version = "0.1.0"
 dependencies = [
  "rdkafka",
+ "serde_json",
  "zirv-config",
 ]

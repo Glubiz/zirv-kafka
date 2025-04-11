@@ -1,7 +1,7 @@
 use std::sync::OnceLock;
 use rdkafka::config::ClientConfig;
 use rdkafka::producer::{FutureProducer, FutureRecord};
-use zirv_config::read_config; // Assuming your project provides a similar configuration macro
+use zirv_config::read_config; // Adjust this to match your config module path
 
 // Our global, one-time-initialized Kafka producer
 static KAFKA_PRODUCER: OnceLock<FutureProducer> = OnceLock::new();
@@ -23,13 +23,14 @@ pub async fn init_kafka_producer() {
 
     let producer: FutureProducer = ClientConfig::new()
         .set("bootstrap.servers", &bootstrap_servers)
-        .set("message.timeout.ms", &message_timeout_ms.to_string())
+        .set("message.timeout.ms", message_timeout_ms.to_string())
         .create()
         .expect("Failed to create Kafka producer.");
 
+    // Instead of expect, use unwrap_or_else so we don't try to format the error value.
     KAFKA_PRODUCER
         .set(producer)
-        .expect("Kafka producer can only be initialized once!");
+        .unwrap_or_else(|_| panic!("Kafka producer can only be initialized once!"));
 }
 
 /// Retrieves a reference to the global Kafka producer.
@@ -55,12 +56,12 @@ pub fn get_kafka_producer() -> &'static FutureProducer {
 /// # Example
 /// ```rust
 /// # async fn example() {
-///     use zirv_kafka::produce_message;
-///     produce_message("contact-updated", "contact-123", "Contact information updated").await;
+/// use zirv_kafka::produce_message;
+/// produce_message("contact-updated", "contact-123", "Contact information updated").await;
 /// # }
 /// ```
 ///
-/// This function flushes the message (with a 1‑second timeout) and logs the result.
+/// This function awaits the result with a 1‑second timeout and prints the delivery information or error.
 pub async fn produce_message(topic: &str, key: &str, payload: &str) {
     let producer = get_kafka_producer();
     let record: FutureRecord<'_, _, _> = FutureRecord::to(topic)
@@ -68,10 +69,14 @@ pub async fn produce_message(topic: &str, key: &str, payload: &str) {
         .key(key);
 
     match producer.send(record, std::time::Duration::from_secs(1)).await {
-        Ok(delivery) => match delivery {
-            Ok((_partition, _offset)) => println!("Message delivered successfully to topic '{}'.", topic),
-            Err((e, _)) => eprintln!("Error delivering message: {:?}", e),
-        },
-        Err(e) => eprintln!("Failed to await message delivery: {:?}", e),
+        Ok((partition, offset)) => {
+            println!(
+                "Message delivered successfully to topic '{}'. Partition: {}, Offset: {}",
+                topic, partition, offset
+            );
+        }
+        Err((e, _payload)) => {
+            eprintln!("Error delivering message: {:?}", e);
+        }
     }
 }
