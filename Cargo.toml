@@ -1,0 +1,8 @@
+[package]
+name = "zirv-kafka"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+rdkafka = { version = "0.37.0", features = ["dynamic-linking"] }
+zirv-config = { version = "0.2.1" }

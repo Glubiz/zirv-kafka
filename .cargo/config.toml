@@ -1,0 +1,2 @@
+[env]
+RDKAFKA_BUILD_STATIC = "0"
