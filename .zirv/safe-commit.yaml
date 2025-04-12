@@ -1,0 +1,32 @@
+name: Safe Commit
+description: "Makes sure to run tests and linting before committing."
+params:
+  - "commit_message"
+commands:
+  - command: cargo fmt -- --check
+    description: "Check code formatting"
+  - command: cargo clippy -- -D warnings
+    description: "Run Clippy"
+  - command: cargo test
+    description: "Run tests"
+  - command: cargo build --release
+    description: "Build the project"
+  - command: git add .
+    description: "Add all changes to git"
+  - command: git commit -m "Safe commit"
+    description: "Commit changes with a safe message"
+  - command: "git add ."
+    description: "Stage all changes"
+    options:
+      proceed_on_failure: false
+      interactive: false
+  - command: "git commit -m \"${commit_message}\""
+    description: "Commit changes with a message"
+    options:
+      proceed_on_failure: false
+      interactive: false
+  - command: "git push origin"
+    description: "Push the commit to the remote repository"
+    options:
+      proceed_on_failure: false
+      interactive: false
