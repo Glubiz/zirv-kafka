@@ -1,6 +1,6 @@
-use std::sync::OnceLock;
 use rdkafka::config::ClientConfig;
 use rdkafka::producer::{FutureProducer, FutureRecord};
+use std::sync::OnceLock;
 use zirv_config::read_config; // Adjust this to match your config module path
 
 // Our global, one-time-initialized Kafka producer
@@ -64,11 +64,12 @@ pub fn get_kafka_producer() -> &'static FutureProducer {
 /// This function awaits the result with a 1‑second timeout and prints the delivery information or error.
 pub async fn produce_message(topic: &str, key: &str, payload: &str) {
     let producer = get_kafka_producer();
-    let record: FutureRecord<'_, _, _> = FutureRecord::to(topic)
-        .payload(payload)
-        .key(key);
+    let record: FutureRecord<'_, _, _> = FutureRecord::to(topic).payload(payload).key(key);
 
-    match producer.send(record, std::time::Duration::from_secs(1)).await {
+    match producer
+        .send(record, std::time::Duration::from_secs(1))
+        .await
+    {
         Ok((partition, offset)) => {
             println!(
                 "Message delivered successfully to topic '{}'. Partition: {}, Offset: {}",

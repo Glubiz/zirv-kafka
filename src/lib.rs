@@ -2,11 +2,11 @@ pub mod producer;
 
 #[macro_export]
 /// Macro to asynchronously initialize the global Kafka producer.
-/// 
+///
 /// # Example
 /// ```rust
 /// use zirv_kafka::init_kafka_producer;
-/// 
+///
 /// #[tokio::main]
 /// async fn main() {
 ///     init_kafka_producer!();
@@ -21,11 +21,11 @@ macro_rules! init_kafka_producer {
 
 #[macro_export]
 /// Macro to retrieve a reference to the global Kafka producer.
-/// 
+///
 /// # Example
 /// ```rust
 /// use zirv_kafka::get_kafka_producer;
-/// 
+///
 /// fn produce() {
 ///     let producer = get_kafka_producer!();
 ///     // Use `producer` directly if needed...
@@ -39,14 +39,14 @@ macro_rules! get_kafka_producer {
 
 #[macro_export]
 /// Macro to produce a Kafka message asynchronously.
-/// 
+///
 /// This macro wraps the call to `$crate::kafka::produce_message(topic, key, payload)`. Being asynchronous,
 /// it returns a future that should be awaited by the caller.
-/// 
+///
 /// # Example
 /// ```rust
 /// use zirv_kafka::produce_message;
-/// 
+///
 /// async fn send_message() {
 ///     produce_message!("contact-updated", "contact-123", "Update payload").await;
 /// }
@@ -69,6 +69,9 @@ mod tests {
         init_kafka_producer!();
         let producer = get_kafka_producer!();
         // Basic check to see if the producer is created. You could also call produce_message if needed.
-        assert!(producer.in_flight_count() == 0, "Producer should be initialized and in a valid state.");
+        assert!(
+            producer.in_flight_count() == 0,
+            "Producer should be initialized and in a valid state."
+        );
     }
 }
