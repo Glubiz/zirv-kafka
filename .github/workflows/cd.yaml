@@ -5,20 +5,32 @@ on:
     workflows: ["CI Pipeline"]  # Ensure this exactly matches your CI workflow name.
     types:
       - completed
-  workflow_dispatch: {}  # Enables a manual trigger button.
+  workflow_dispatch: {}  # Enables manual trigger.
 
 jobs:
   publish:
+    # Run this job if the workflow was manually triggered or the CI pipeline finished successfully.
     if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
+      - name: Set Up Rust Toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Install librdkafka dynamic linking dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y librdkafka-dev pkg-config
+
       - name: Build Release Binary
-        run: cargo build --release
+        run: cargo build --release --verbose
 
       - name: Publish to crates.io
         env:
           CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_IO_TOKEN }}
-        run: cargo publish --no-verify
+        run: cargo publish --no-verify --verbose
