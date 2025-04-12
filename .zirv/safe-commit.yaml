@@ -11,10 +11,6 @@ commands:
     description: "Run tests"
   - command: cargo build --release
     description: "Build the project"
-  - command: git add .
-    description: "Add all changes to git"
-  - command: git commit -m "Safe commit"
-    description: "Commit changes with a safe message"
   - command: "git add ."
     description: "Stage all changes"
     options:
