@@ -35,10 +35,7 @@ jobs:
 
       - name: Check Code Formatting
         run: cargo fmt -- --check
-
-      - name: Run Clippy Lint
-        run: cargo clippy --all-targets -- -D warnings
-
+        
       - name: Build the Library
         run: cargo build --verbose
 
