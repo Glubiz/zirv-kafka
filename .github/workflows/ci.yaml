@@ -33,6 +33,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-cargo-target-
 
+      - name: Install librdkafka dynamic linking dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y librdkafka-dev pkg-config
+
       - name: Check Code Formatting
         run: cargo fmt -- --check
 
