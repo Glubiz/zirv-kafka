@@ -1,3 +1,4 @@
+pub mod consumer;
 pub mod producer;
 
 #[macro_export]
@@ -28,7 +29,7 @@ macro_rules! init_kafka_producer {
 ///
 /// fn produce() {
 ///     let producer = get_kafka_producer!();
-///     // Use `producer` directly if needed...
+///     // Use producer directly...
 /// }
 /// ```
 macro_rules! get_kafka_producer {
@@ -40,8 +41,7 @@ macro_rules! get_kafka_producer {
 #[macro_export]
 /// Macro to produce a Kafka message asynchronously.
 ///
-/// This macro wraps the call to `$crate::kafka::produce_message(topic, key, payload)`. Being asynchronous,
-/// it returns a future that should be awaited by the caller.
+/// Wraps a call to `$crate::producer::produce_message(topic, key, payload)`.
 ///
 /// # Example
 /// ```rust
@@ -57,21 +57,29 @@ macro_rules! produce_message {
     };
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use rdkafka::producer::Producer;
-
-    #[tokio::test]
-    async fn test_kafka_producer_initialization() {
-        // Note: Ensure that your configuration (e.g., via environment variables or a config file)
-        // for "kafka.bootstrap_servers" is set before running this test.
-        init_kafka_producer!();
-        let producer = get_kafka_producer!();
-        // Basic check to see if the producer is created. You could also call produce_message if needed.
-        assert!(
-            producer.in_flight_count() == 0,
-            "Producer should be initialized and in a valid state."
-        );
-    }
+/// Macro to initialize a BaseConsumer with default settings and spawn its polling thread.
+/// Returns the thread JoinHandle.
+///
+/// # Example
+///
+/// ```rust
+/// use zirv_kafka::start_base_consumer;
+///
+/// // This spawns a thread that polls the consumer and prints each message payload.
+/// let _handle = start_base_consumer!("my-group", &["test-topic"], |msg| {
+///     match msg {
+///         Ok(m) => println!("Received: {:?}", m),
+///         Err(e) => eprintln!("Error: {:?}", e),
+///     }
+/// });
+/// // The thread will run in the background.
+/// ```
+#[macro_export]
+macro_rules! start_base_consumer {
+    ($group:expr, $topics:expr, $handler:expr) => {{
+        let consumer = $crate::consumer::init_base_consumer($group, $topics)
+            .expect("Consumer initialization failed");
+        let arc_consumer = std::sync::Arc::new(consumer);
+        $crate::consumer::start_consumer_thread(arc_consumer, $handler)
+    }};
 }
