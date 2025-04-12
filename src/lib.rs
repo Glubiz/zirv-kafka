@@ -1,4 +1,4 @@
-pub mod kafka;
+pub mod producer;
 
 #[macro_export]
 /// Macro to asynchronously initialize the global Kafka producer.
@@ -15,7 +15,7 @@ pub mod kafka;
 /// ```
 macro_rules! init_kafka_producer {
     () => {
-        $crate::kafka::init_kafka_producer().await;
+        $crate::producer::init_kafka_producer().await;
     };
 }
 
@@ -33,7 +33,7 @@ macro_rules! init_kafka_producer {
 /// ```
 macro_rules! get_kafka_producer {
     () => {
-        $crate::kafka::get_kafka_producer()
+        $crate::producer::get_kafka_producer()
     };
 }
 
@@ -53,7 +53,7 @@ macro_rules! get_kafka_producer {
 /// ```
 macro_rules! produce_message {
     ($topic:expr, $key:expr, $payload:expr) => {
-        $crate::kafka::produce_message($topic, $key, $payload)
+        $crate::producer::produce_message($topic, $key, $payload)
     };
 }
 
@@ -69,6 +69,6 @@ mod tests {
         init_kafka_producer!();
         let producer = get_kafka_producer!();
         // Basic check to see if the producer is created. You could also call produce_message if needed.
-        assert!(producer.client().bootstrap_servers().is_some());
+        assert!(producer.in_flight_count() == 0, "Producer should be initialized and in a valid state.");
     }
 }

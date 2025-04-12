@@ -57,7 +57,7 @@ pub fn get_kafka_producer() -> &'static FutureProducer {
 /// ```rust
 /// # async fn example() {
 /// use zirv_kafka::produce_message;
-/// produce_message("contact-updated", "contact-123", "Contact information updated").await;
+/// produce_message!("contact-updated", "contact-123", "Contact information updated").await;
 /// # }
 /// ```
 ///

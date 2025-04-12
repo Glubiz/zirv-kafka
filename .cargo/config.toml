@@ -1,3 +1,0 @@
-[env]
-RDKAFKA_STATIC = "0"
-RDKAFKA_DYNAMIC = "1"

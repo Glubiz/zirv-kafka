@@ -1,16 +1,20 @@
 [package]
 name = "zirv-kafka"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 description = "A convinient wrapper for rdkafka."
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/Glubiz/zirv-kafka"
 documentation = "https://docs.rs/zirv-kafka"
-keywords = ["rust", "programming"]
+keywords = ["rust", "programming", "kafka", "rdkafka", "zirv"]
 categories = ["development-tools"]
 
 [dependencies]
 rdkafka = { version = "0.37.0", features = ["dynamic-linking"] }
+rdkafka-sys = { version = "4.8.0+2.3.0" }
 serde_json = "1.0.140"
 zirv-config = { version = "0.2.1" }
+
+[dev-dependencies]
+tokio = { version = "1.0", features = ["full"] }
