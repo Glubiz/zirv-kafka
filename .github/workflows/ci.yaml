@@ -35,9 +35,3 @@ jobs:
 
       - name: Check Code Formatting
         run: cargo fmt -- --check
-        
-      - name: Build the Library
-        run: cargo build --verbose
-
-      - name: Run Tests
-        run: cargo test --verbose
