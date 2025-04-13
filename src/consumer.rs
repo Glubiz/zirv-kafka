@@ -31,7 +31,6 @@ pub fn init_base_consumer(group_id: &str, topics: &[&str]) -> Result<BaseConsume
     let consumer: BaseConsumer = ClientConfig::new()
         .set("bootstrap.servers", &brokers)
         .set("group.id", group_id)
-        .set("enable.auto.commit", "false") // Commit offsets manually.
         .set("session.timeout.ms", "6000")
         .set("auto.offset.reset", "earliest")
         .create()?;
